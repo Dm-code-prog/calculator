@@ -1,7 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
     * {
         margin: 0;
         padding: 0;
@@ -55,16 +54,20 @@ const GlobalStyle = createGlobalStyle`
         }
         
         button:hover{
+            cursor: pointer;
+        }
+
+        button:focus{
             background-color: #a1a6a8;
             outline: 0;
         }
+
         
         button:nth-child(-n+3) {
             background-color: #38393e;
         }
         
-        
-        button:nth-child(-n+3):hover{
+        button:nth-child(-n+3):focus{
             background-color: #58595f;
             
         } 
@@ -74,9 +77,9 @@ const GlobalStyle = createGlobalStyle`
             background-color: #fe9e0e;
           }
         
-          button:last-child:hover, 
+          button:last-child:f, 
           button:nth-child(4n-4):hover{
-              background: 	rgba(254,158,14, 0.7);
+              cursor: pointer;
           }
 
           button:last-child:focus, 
