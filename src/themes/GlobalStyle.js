@@ -51,6 +51,7 @@ const GlobalStyle = createGlobalStyle`
             height: 66px;
             width: 66px;
             border-radius: 50%;
+            transition: all 0.4s ease-in-out;
         }
         
         button:hover{
