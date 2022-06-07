@@ -1,60 +1,54 @@
 import React from 'react';
 import CGrid from '../themes/Calculator.styled';
-import {Ctx} from '../App'
 
 function Calculator(props) {
-    const [result, setResult] = React.useContext(Ctx)
+    const [result, setResult] = React.useState([["", "", ""], 0])
+    const [currentIndex, setCurrentIndex] = React.useState(0)
+
     const numbers = ['0', '1', '2', '3', '4', '5', '6', '7' ,'.', '8', '9']
     const operators = ['+', '-', 'x', '÷']
+    const firstValue = result[0][0]
+    const operator = result[0][1]
+    const secondValue = result[0][2]
+    const resultClone = [...result];
 
-    function round(num){
-        if (num.Length > 8){
-            return num.slice(0, 8)
-        } return num
-    }
-
-    function HandleClick(event){
-
-        const value = event.target.value;
-        const firstValue = result[0][0]
-        const operator = result[0][1]
-        const secondValue = result[0][2]
-
-
-        let currentValue;
-        let currentIndex = 0;
-
-        if (numbers.includes(value)){
-           if (operator === null){
-               firstValue === null || firstValue.endsWith('_old')? currentValue="":currentValue=firstValue;
-                currentIndex = 0
-           } else {
-                secondValue === null? currentValue="":currentValue=secondValue
-                currentIndex = 2
-              }
-            currentValue.Length > 8? currentValue = currentValue.slice(0, 8): currentValue = currentValue
-            const array = [...result[0]];
-            let finalString = `${currentValue}${value}`
-            finalString.length > 8? finalString = finalString.slice(0, 8): finalString = finalString
-
-            if (currentValue.length < 1 && value === '.'){
-                array[currentIndex] = '0.'
-            } else {
-                array[currentIndex] = finalString
-            }
-
-            setResult([array, array[currentIndex]])
+    function HandleDoubleClick(){
+        if (firstValue.endsWith('_old')){
+            setResult([["", "", ""], 0]);
+            setCurrentIndex(0);
         }
-
+    }
+    function HandleClick(event){
+        const value = event.target.value;
         if (operators.includes(value)){
-            if (firstValue !== null){
-                if (firstValue.endsWith('_old')){
-                    const firstValueMutated = firstValue.split('_')[0]
-                    setResult([[firstValueMutated, value, null], firstValueMutated])
-                } else {
-                setResult([[firstValue, value, secondValue], firstValue])
-                }
+            setCurrentIndex( i => 2)
+            resultClone[0][1] = value;
+            if (firstValue.endsWith('_old')){
+                resultClone[0][0] = firstValue.split('_')[0]
             }
+            if (secondValue){
+                
+            } else {
+                setResult(resultClone)
+            }
+        }
+        if (numbers.includes(value)){
+            let newValue;
+            newValue = `${resultClone[0][currentIndex]}${value}`
+            if (firstValue.endsWith('_old')){
+                newValue =  value;
+            }
+            if (newValue === '.'){
+                newValue = '0.'
+            }
+            newValue.length > 8? newValue= `${newValue.slice(0,7)}...`: newValue=newValue;
+            resultClone[1] = newValue; 
+            resultClone[0][currentIndex] = newValue;
+            setResult(resultClone)
+        }
+        if (value === 'AC'){
+            setResult([["", "", ""], 0]);
+            setCurrentIndex(0);
         }
         if (value === '='){
             let r = 0
@@ -72,12 +66,23 @@ function Calculator(props) {
         }
         r = r.toString();
         const rMutated = r.length > 8? r.slice(0,8): r;
-            setResult([[`${r}_old`, null, null],rMutated])
+            setResult([[`${r}_old`, '', ''],rMutated])
+            setCurrentIndex(0);
         }
-        if (value === 'AC'){
-            setResult([[null, null, null], 0])
+
+        if (value === '+/−'){
+            if (firstValue.endsWith('_old')){
+                resultClone[0][0] = firstValue.split('_')[0]
+            }
+            let unValue = resultClone[0][currentIndex];
+            unValue = unValue.startsWith('-')? unValue.substring(1) : `-${unValue}`
+            resultClone[0][currentIndex] = unValue;
+            resultClone[1] = unValue;
+            setResult(resultClone);
         }
 }
+
+console.log(result)
 
     return (
         <CGrid>
@@ -87,8 +92,8 @@ function Calculator(props) {
         </div>
         <div className="calculator">
             <button onClick={HandleClick} value='AC'>AC</button>
-            <button  onClick={HandleClick} value='+/−'></button>
-            <button></button>
+            <button onClick={HandleClick} value='+/−'>+/−</button>
+            <button onClick={HandleClick}></button>
             <button onClick={HandleClick} value='÷'>÷</button>
     
             <button onClick={HandleClick} value='7'>7</button>
@@ -106,7 +111,10 @@ function Calculator(props) {
             <button onClick={HandleClick} value='3'>3</button>
             <button onClick={HandleClick} value='+'>+</button>
 
-            <button onClick={HandleClick} className="double">0</button>
+            <button onClick={HandleClick} 
+            className="double" 
+            value='0'
+            onDoubleClick={HandleDoubleClick}>0</button>
             <button onClick={HandleClick} value=".">.</button>
             <button onClick={HandleClick} value="=">=</button>
     
